@@ -12,7 +12,7 @@ def broadcast(message, client_socket):
     for client in clients:
         if client['socket'] != client_socket:
             try:
-                client['socket'].send(message)
+                client['socket'].send(message.encode('utf-8'))
             except:
                 client['socket'].close()
                 clients.remove(client)
@@ -25,24 +25,33 @@ def handle_client(client):
         client_socket.close()
         clients.remove(client_socket)
         return
-    client["name"] = client_socket.recv(1024).decode('utf-8')
+    
+    try:
+        client["name"] = client_socket.recv(1024).decode('utf-8')
+    except:
+        client_socket.close()
+        clients.remove(client)
+        return
+    
     name = client["name"]
     print(f"{name} has joined the chatroom")
+    broadcast(f"{name} has joined the chatroom", client)
         
     while True:
         try:
-            message = client_socket.recv(1024)
+            message = client_socket.recv(1024).decode('utf-8')
             if message:
-                print(f"Received from {name}: {message.decode('utf-8')}")
-                message = f"{name} {message}".encode('utf-8')
-                broadcast(message, client)
+                print(f"Received from {name}: {message}")
+                broadcast(f"[{name}] {message}", client)
             else:
                 client_socket.close()
                 clients.remove(client_socket)
+                broadcast(f"{name} has left the chatroom", client)
                 break
         except:
             client_socket.close()
             clients.remove(client_socket)
+            broadcast(f"{name} has left the chatroom", client)
             break
 
 def main():
