@@ -20,7 +20,7 @@ def receive_messages(client_socket):
 
 def main():
     # Get the user name
-    user_name = input("Welcome to the chat! Enter your username: ")
+    user_name = input("Welcome to the chat! Enter your username (Enter a blank to exit): ")
     if not user_name:
         return
 
@@ -36,7 +36,7 @@ def main():
     while True:
         message = input()
         if not message:
-            thread.join()
+            client_socket.close()
             break
         client_socket.send(message.encode('utf-8'))
 

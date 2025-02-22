@@ -36,7 +36,7 @@ def handle_client(client):
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
-                print(f"Received from {name}: {message.decode('utf-8')}")
+                print(f"Received from {name}: {message}")
                 broadcast(f"[{name}] {message}", client)
             else:
                 client_socket.close()
@@ -44,10 +44,10 @@ def handle_client(client):
                 print(f"{name} has left the chatroom")
                 broadcast(f"{name} has left the chatroom", client)
                 break
-        except:
+        except Exception as e:
             client_socket.close()
             clients.remove(client)
-            print(f"{name} has left the chatroom")
+            print(f"{name} has left the chatroom due to an error: {e}")
             broadcast(f"{name} has left the chatroom", client)
             break
 
