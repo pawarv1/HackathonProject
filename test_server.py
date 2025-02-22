@@ -17,12 +17,12 @@ def broadcast(message, client_socket):
                 client.close()
                 clients.remove(client)
 
-def handle_client(client_socket):
+def handle_client(client_socket, client_address, client_number):
     while True:
         try:
             message = client_socket.recv(1024)
             if message:
-                print(f"Received: {message.decode('utf-8')}")
+                print(f"Msg from User {client_number}, {client_address}: {message.decode('utf-8')}")
                 broadcast(message, client_socket)
             else:
                 client_socket.close()
@@ -34,16 +34,19 @@ def handle_client(client_socket):
             break
 
 def main():
+    client_number = 0
+
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen(5)
     print(f"Server started on {HOST}:{PORT}")
 
     while True:
+        client_number = client_number + 1
         client_socket, client_address = server.accept()
         print(f"Connection from {client_address}")
         clients.append(client_socket)
-        thread = threading.Thread(target=handle_client, args=(client_socket,))
+        thread = threading.Thread(target=handle_client, args=(client_socket, client_address, client_number))
         thread.start()
 
 if __name__ == "__main__":

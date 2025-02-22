@@ -5,8 +5,12 @@ import threading
 HOST = '127.0.0.1'
 PORT = 12345
 
+# Flag to stop the thread
+stop_thread = False
+
 def receive_messages(client_socket):
-    while True:
+    global stop_thread
+    while not stop_thread:
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
@@ -19,8 +23,11 @@ def receive_messages(client_socket):
             break
 
 def main():
+    global stop_thread
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((HOST, PORT))
+
+    print("\n*** Welcome to the chat room. Enter a blank msg to exit ***")
 
     thread = threading.Thread(target=receive_messages, args=(client_socket,))
     thread.start()
@@ -28,6 +35,8 @@ def main():
     while True:
         message = input()
         if not message:
+            stop_thread = True
+            client_socket.close()
             break
         client_socket.send(message.encode('utf-8'))
 
