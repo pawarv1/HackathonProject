@@ -8,9 +8,9 @@ PORT = 12345
 # List to keep track of connected clients
 clients = []
 
-def broadcast(message, client_socket):
+def broadcast(message, sender_client):
     for client in clients:
-        if client != client_socket:
+        if client != sender_client:
             try:
                 client["socket"].send(message.encode('utf-8'))
             except:
@@ -19,13 +19,8 @@ def broadcast(message, client_socket):
 
 def handle_client(client):
     client_socket = client["socket"]
-    try:
-        client_socket.send("Welcome to the chatroom! Please enter your name:".encode('utf-8'))
-    except:
-        client_socket.close()
-        clients.remove(client_socket)
-        return
     
+    # Receive the client's name
     try:
         client["name"] = client_socket.recv(1024).decode('utf-8')
     except:
@@ -34,23 +29,25 @@ def handle_client(client):
         return
     
     name = client["name"]
-    print(f"{name} has joined the chatroom")
+    print(f"{name}, {client["address"]} has joined the chatroom")
     broadcast(f"{name} has joined the chatroom", client)
         
     while True:
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
-                print(f"Received from {name}: {message}")
+                print(f"Received from {name}: {message.decode('utf-8')}")
                 broadcast(f"[{name}] {message}", client)
             else:
                 client_socket.close()
                 clients.remove(client)
+                print(f"{name} has left the chatroom")
                 broadcast(f"{name} has left the chatroom", client)
                 break
         except:
             client_socket.close()
             clients.remove(client)
+            print(f"{name} has left the chatroom")
             broadcast(f"{name} has left the chatroom", client)
             break
 
