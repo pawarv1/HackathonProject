@@ -10,20 +10,32 @@ clients = []
 
 def broadcast(message, client_socket):
     for client in clients:
-        if client != client_socket:
+        if client['socket'] != client_socket:
             try:
-                client.send(message)
+                client['socket'].send(message)
             except:
-                client.close()
+                client['socket'].close()
                 clients.remove(client)
 
-def handle_client(client_socket):
+def handle_client(client):
+    client_socket = client["socket"]
+    try:
+        client_socket.send("Welcome to the chatroom! Please enter your name.".encode('utf-8'))
+    except:
+        client_socket.close()
+        clients.remove(client_socket)
+        return
+    client["name"] = client_socket.recv(1024).decode('utf-8')
+    name = client["name"]
+    print(f"{name} has joined the chatroom")
+        
     while True:
         try:
             message = client_socket.recv(1024)
             if message:
-                print(f"Received: {message.decode('utf-8')}")
-                broadcast(message, client_socket)
+                print(f"Received from {name}: {message.decode('utf-8')}")
+                message = f"{name} {message}".encode('utf-8')
+                broadcast(message, client)
             else:
                 client_socket.close()
                 clients.remove(client_socket)
@@ -41,9 +53,11 @@ def main():
 
     while True:
         client_socket, client_address = server.accept()
-        print(f"Connection from {client_address}")
-        clients.append(client_socket)
-        thread = threading.Thread(target=handle_client, args=(client_socket,))
+        client = dict(name="John Doe", socket=client_socket, address=client_address)
+        clients.append(client)
+
+        print(f"Connection from {client['address']}")
+        thread = threading.Thread(target=handle_client, args=(client,))
         thread.start()
 
 if __name__ == "__main__":

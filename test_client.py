@@ -10,7 +10,7 @@ def receive_messages(client_socket):
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
-                print("Msg from user: " + message)
+                print(message)
             else:
                 client_socket.close()
                 break
