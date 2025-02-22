@@ -10,17 +10,9 @@ PORT = 12345
 clients = []
 rooms = []
 
-def broadcast(message, sender_client):
-    for client in clients:
-        if client != sender_client:
-            try:
-                client["socket"].send(message.encode('utf-8'))
-            except:
-                client["socket"].close()
-                clients.remove(client)
-
 def handle_client(client):
     client_socket = client["socket"]
+    room = client["room"]
     
     # Receive the client's name
     try:
@@ -28,29 +20,32 @@ def handle_client(client):
     except:
         client_socket.close()
         clients.remove(client)
+        room.remove_user(client)
         return
     
     name = client["name"]
     print(f"{name}, {client["address"]} has joined the chatroom")
-    client["room"].broadcast(f"{name} has joined the chatroom", client)
+    room.broadcast(f"{name} has joined the chatroom", client)
         
     while True:
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
                 print(f"Received from {name}: {message}")
-                client["room"].broadcast(f"[{name}] {message}", client)
+                room.broadcast(f"[{name}] {message}", client)
             else:
                 client_socket.close()
                 clients.remove(client)
+                room.remove_user(client)
                 print(f"{name} has left the chatroom")
-                client["room"].broadcast(f"{name} has left the chatroom", client)
+                room.broadcast(f"{name} has left the chatroom", client)
                 break
         except Exception as e:
             client_socket.close()
             clients.remove(client)
+            room.remove_user(client)
             print(f"{name} has left the chatroom due to an error: {e}")
-            client["room"].broadcast(f"{name} has left the chatroom", client)
+            room.broadcast(f"{name} has left the chatroom", client)
             break
 
 def main():
