@@ -10,11 +10,11 @@ clients = []
 
 def broadcast(message, client_socket):
     for client in clients:
-        if client != client_socket:
+        if client['socket'] != client_socket:
             try:
-                client.send(message)
+                client['socket'].send(message)
             except:
-                client.close()
+                client['socket'].close()
                 clients.remove(client)
 
 def handle_client(client):
@@ -34,6 +34,7 @@ def handle_client(client):
             message = client_socket.recv(1024)
             if message:
                 print(f"Received from {name}: {message.decode('utf-8')}")
+                message = f"{name} {message}".encode('utf-8')
                 broadcast(message, client)
             else:
                 client_socket.close()
