@@ -8,6 +8,7 @@ CORS(app)
 
 @app.route('/startServer', methods=['POST'])
 def start_server():
+    
     data = request.get_json()
     userName = data.get("userName")
     roomName = data.get("roomName")
