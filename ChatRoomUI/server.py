@@ -1,6 +1,6 @@
 import socket
 import threading
-import ChatRoomUI.ChatRoom as ChatRoom
+import ChatRoom
 
 # Server configuration
 HOST = '127.0.0.1'
@@ -9,18 +9,11 @@ PORT = 12345
 # List to keep track of connected clients
 clients = []
 rooms = []
+messageHistory = []
 
 def handle_client(client):
     client_socket = client["socket"]
     room = client["room"]
-    
-    # Receive the client's name
-    try:
-        client["name"] = client_socket.recv(1024).decode('utf-8')
-    except:
-        clients.remove(client)
-        room.remove_user(client)
-        return
     
     name = client["name"]
     print(f"{name}, {client["address"]} has joined the chatroom")
@@ -30,7 +23,7 @@ def handle_client(client):
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message:
-                print(f"Received from {name}: {message}")
+                messageHistory.append(f"{name}: {message}")
                 room.broadcast(f"[{name}] {message}", client)
             else:
                 clients.remove(client)
@@ -41,6 +34,11 @@ def handle_client(client):
             room.remove_user(client)
             print(f"{name} has left the chatroom due to an error: {e}")
             break
+
+def receive_messages():
+    buffer = messageHistory
+    messageHistory = []
+    return buffer
 
 def startServer(userName, roomID):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
