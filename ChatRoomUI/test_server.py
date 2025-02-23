@@ -10,15 +10,15 @@ CORS(app)
 @app.route('/startServer', methods=['POST'])
 def start_server():
     data = request.get_json()
-    name = data.get("name")
-    room_id = data.get("roomID")
+    userName = data.get("userName")
+    roomName = data.get("roomName")
 
     server = server.startServer(name, room_id)
 
-    if not name or not room_id:
-        return jsonify({"message": "Name and Room ID are required!"}), 400
+    if not userName or not roomName:
+        return jsonify({"message": "User Name and Room Name are required!"}), 400
 
-    return jsonify({"message": f"Server started for {name} in room {room_id}!"})
+    return jsonify({"message": f"Server started for {userName} in room {roomName}!"})
 
 
 if __name__ == "__main__":
