@@ -11,27 +11,27 @@ def start_server():
     
     data = request.get_json()
     userName = data.get("userName")
-    roomName = data.get("roomName")
+    roomID = data.get("roomID")
 
-    serverObj = server.startServer(userName, roomName)
-
-    if not userName or not roomName:
-        return jsonify({"message": "User Name and Room Name are required!"}), 400
-
-    return jsonify({"message": f"Server started for {userName} in room {roomName}!"})
+    if not userName or not roomID:
+        return jsonify({"message": "User Name and Room ID are required!"}), 400
+    else:
+        serverObj = server.startServer(userName, roomID)
+    
+    #return jsonify({"message": f"Server started for {userName} in room id {roomID}!"})
 
 
 # Client initialization
 @app.route('/startClient', methods=['POST'])
 def start_client():
     data = request.get_json()
-    roomName = data.get("roomName")
+    userName = data.get("userName")
     roomID = data.get("roomID")
 
-    if not roomName or not roomID:
-        return jsonify({"message": "Room Name and Room ID are required!"}), 400
+    if not userName or not roomID:
+        return jsonify({"message": "User Name and Room ID are required!"}), 400
 
-    return jsonify({"message": f"Attempting to connect to {roomName} and room id {roomID}"})
+    return jsonify({"message": f"User {userName} is attempting to connect to room id {roomID}"})
 
 def receive_messages():
     buffer = server.receive_messages()

@@ -10,8 +10,8 @@ class ChatRoom:
 
     def remove_user(self, user):
         user["socket"].close()
-        print(f"{user["name"]} has left the chatroom")
-        self.broadcast(f"{user["name"]} has left the chatroom", user)
+        print(f"{user['name']} has left the chatroom")
+        self.broadcast(f"{user['name']} has left the chatroom", user)
         self.users.remove(user)
 
     def remove_all_users(self):

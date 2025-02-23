@@ -16,7 +16,7 @@ def handle_client(client):
     room = client["room"]
     
     name = client["name"]
-    print(f"{name}, {client["address"]} has joined the chatroom")
+    print(f"{name}, {client['address']} has joined the chatroom")
     room.broadcast(f"{name} has joined the chatroom", client)
         
     while True:
