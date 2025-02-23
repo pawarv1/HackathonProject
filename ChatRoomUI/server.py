@@ -50,6 +50,7 @@ class Server:
             try:
                 message = client_socket.recv(1024).decode('utf-8')
                 if message:
+                    print(f"{name}: {message}")
                     self.messageHistory.append(f"{name}: {message}")
                     room.broadcast(f"[{name}] {message}", client)
                 else:

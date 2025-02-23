@@ -42,8 +42,7 @@ def start_client():
     return jsonify({"message": f"User {userName} is attempting to connect to room id {roomID}"})
 
 def receive_messages():
-    serverObj.receive_messages()
-    return jsonify(buffer)
+    return serverObj.receive_messages()
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
