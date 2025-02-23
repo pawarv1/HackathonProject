@@ -13,7 +13,7 @@ def start_server():
     userName = data.get("userName")
     roomName = data.get("roomName")
 
-    server = server.startServer(userName, roomName)
+    serverObj = server.startServer(userName, roomName)
 
     if not userName or not roomName:
         return jsonify({"message": "User Name and Room Name are required!"}), 400
