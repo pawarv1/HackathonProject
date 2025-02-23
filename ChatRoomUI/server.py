@@ -1,6 +1,6 @@
 import socket
 import threading
-import ChatRoom
+import ChatRoomUI.ChatRoom as ChatRoom
 
 # Server configuration
 HOST = '127.0.0.1'
@@ -42,13 +42,13 @@ def handle_client(client):
             print(f"{name} has left the chatroom due to an error: {e}")
             break
 
-def main():
+def startServer(userName, roomID):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen(5)
     print(f"Server started on {HOST}:{PORT}")
     
-    room = ChatRoom.ChatRoom(1, "Room 1")
+    room = ChatRoom.ChatRoom(roomID, "Room 1")
     rooms.append(room)
 
     while True:
@@ -61,12 +61,9 @@ def main():
             for room_item in rooms:
                 client_socket.send(f"{room_item.roomNumber}".encode('utf-8'))
 
-        client = dict(name="John Doe", room= room, socket=client_socket, address=client_address)
+        client = dict(name=userName, room= room, socket=client_socket, address=client_address)
         clients.append(client)
 
         room.add_user(client)
         thread = threading.Thread(target=handle_client, args=(client,))
         thread.start()
-
-if __name__ == "__main__":
-    main()
