@@ -47,15 +47,24 @@ def main():
     server.bind((HOST, PORT))
     server.listen(5)
     print(f"Server started on {HOST}:{PORT}")
-    room1 = ChatRoom.ChatRoom(1, "Room 1")
-    rooms.append(room1)
+    
+    room = ChatRoom.ChatRoom(1, "Room 1")
+    rooms.append(room)
 
     while True:
         client_socket, client_address = server.accept()
-        client = dict(name="John Doe", room= room1, socket=client_socket, address=client_address)
+
+        if not rooms:
+            client_socket.send("Would you like to create a room? Enter y or n:".encode('utf-8'))
+        else:
+            client_socket.send("Available Rooms: ".encode('utf-8'))
+            for room_item in rooms:
+                client_socket.send(f"{room_item.roomNumber}".encode('utf-8'))
+
+        client = dict(name="John Doe", room= room, socket=client_socket, address=client_address)
         clients.append(client)
 
-        room1.add_user(client)
+        room.add_user(client)
         thread = threading.Thread(target=handle_client, args=(client,))
         thread.start()
 
