@@ -1,7 +1,9 @@
+import "./Home.css";
+
 function Home() {
   return (
     <div>
-      <h1>Welcome to Home</h1>
+      <h1>Welcome to ChatRoom</h1>
     </div>
   );
 }

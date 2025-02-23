@@ -17,6 +17,16 @@ def start_server():
 
     return jsonify({"message": f"Server started for {userName} in room {roomName}!"})
 
+@app.route('/startClient', methods=['POST'])
+def start_client():
+    data = request.get_json()
+    roomName = data.get("roomName")
+    roomID = data.get("roomID")
+
+    if not roomName or not roomID:
+        return jsonify({"message": "Room Name and Room ID are required!"}), 400
+
+    return jsonify({"message": f"Attempting to connect to {roomName} and room id {roomID}"})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

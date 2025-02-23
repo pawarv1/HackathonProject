@@ -22,9 +22,9 @@ import { useState } from "react";
         <div>
             <h1>Welcome to Server</h1>
             <form onSubmit={handleSubmit}>
-                <label for="userName">Enter your name:</label>
+                <label for="userName">Enter your username:</label>
                 <input type="text" id="userName" value={userName} onChange={(e) => setUserName(e.target.value)}></input><br></br>
-                <label for="roomID">Enter your room id:</label>
+                <label for="roomName">Enter your room name:</label>
                 <input type="text" id="roomName" value={roomName} onChange={(e) => setRoomName(e.target.value)}></input><br></br>
                 <button type="submit">Create Room</button>
             </form>
